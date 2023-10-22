@@ -28,7 +28,9 @@ function reducer(state, action) {
 
 async function fetch(dispatch) {
     try {
-        const promise = await axios.get("http://localhost:3001/users");
+        const promise = await axios.get(
+            "https://wkjnb4kz-3001.euw.devtunnels.ms/users"
+        );
         dispatch({ type: "FETCH_SUCCESS", payload: promise.data });
     } catch (e) {
         dispatch({ type: "FETCH_ERR", payload: e });
@@ -40,6 +42,7 @@ function App() {
     const [newUser, setNewUser] = useState({
         name: "",
         username: "",
+        password: "",
         email: "",
         phone: "",
     });
@@ -52,18 +55,25 @@ function App() {
     }, [newUser]);
 
     useEffect(() => {
-        if (isUsed) {
+        if (check) {
             setTimeout(() => {
                 setCheck(!check);
-                setNewUser({ ...newUser, name: "" });
+                setNewUser({
+                    ...newUser,
+                    name: "",
+                    username: "",
+                    password: "",
+                    email: "",
+                    phone: "",
+                });
                 setIsUsed(!isUsed);
             }, 2000);
         }
-    }, [isUsed]);
+    }, [check]);
 
     useEffect(() => {
         state.users.map((u) => {
-            if (u.name.toLowerCase() == newUser.name.toLowerCase()) {
+            if (u.username.toLowerCase() == newUser.username.toLowerCase()) {
                 setIsUsed(true);
             }
             console.log(isUsed);
@@ -74,8 +84,17 @@ function App() {
         if (isUsed) {
             setCheck(!check);
         } else {
-            axios.post("http://localhost:3001/users", { ...newUser });
-            setNewUser({ ...newUser, name: "" });
+            axios.post("https://wkjnb4kz-3001.euw.devtunnels.ms/users", {
+                ...newUser,
+            });
+            setNewUser({
+                ...newUser,
+                name: "",
+                username: "",
+                password: "",
+                email: "",
+                phone: "",
+            });
         }
     }
 
@@ -84,6 +103,8 @@ function App() {
     //         ? setNewUser({ ...newUser, name: name, username: username })
     //         : console.log("err");
     // }
+
+    function click() {}
 
     return (
         <div className="App">
@@ -104,18 +125,14 @@ function App() {
                                     });
                                 }}
                             />
-                            {/* <button onClick={editNewUser}>Click</button> */}
+                            {/* <button onClick={click}>Click</button> */}
                         </div>
-                        {/* <div className="formField">
-                            <span>{newUser.name}</span>
-                            <span>{newUser.username}</span>
-                        </div> */}
-                        {/* <div className="formField">
+                        <div className="formField">
                             <label>Username:</label>
                             <input
                                 className="inp"
                                 type="text"
-                                value={username}
+                                value={newUser.username}
                                 onChange={(e) => {
                                     setNewUser({
                                         ...newUser,
@@ -123,34 +140,28 @@ function App() {
                                     });
                                 }}
                             />
-                        </div> */}
-                        {/* <div className="formField">
-                    <label>Email:</label>
-                    <input
-                        className="inp"
-                        type="text"
-                        value={name}
-                        onChange={(e) => {
-                            setName(e.target.value);
-                        }}
-                    />
-                </div>
-                <div className="formField">
-                    <label>Phone:</label>
-                    <input
-                        className="inp"
-                        type="text"
-                        value={name}
-                        onChange={(e) => {
-                            setName(e.target.value);
-                        }}
-                    />
-                </div> */}
+                        </div>
+                        <div className="formField">
+                            <label>Password: </label>
+                            <input
+                                className="inp"
+                                type="password"
+                                value={newUser.password}
+                                onChange={(e) => {
+                                    setNewUser({
+                                        ...newUser,
+                                        password: e.target.value,
+                                    });
+                                }}
+                            />
+                        </div>
                     </div>
-                    {isUsed ? (
+                    {check ? (
                         <label style={{ color: "red" }}>Already taken</label>
                     ) : null}
-                    <button onClick={postUser}>Submit</button>
+                    <button type="submit" onClick={postUser}>
+                        Submit
+                    </button>
                 </div>
             </div>
         </div>
